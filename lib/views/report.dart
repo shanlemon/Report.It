@@ -27,20 +27,6 @@ class _ReportViewState extends State<ReportView> {
     void initState() {
       super.initState();
 
-      // FirebaseApp app = new FirebaseApp(name: 'reports');
-      // _reports = FirebaseDatabase.instance.reference().child('reports');
-      // print(_reports
-      //   .orderByChild('crime')
-      //   .startAt(0)
-      //   .endAt(3));
-      // _reports.keepSynced(true);
-      //   _reportsSubscription = _reports.onValue.listen((Event event) {
-      //     setState(() {
-      //       data = event.snapshot.value ?? 0;
-      //     });
-      //     print(data);
-      //   });
-
        ImagePicker.pickImage(source: ImageSource.camera).then((File f) {
         setState(() {
           image = f;
@@ -84,8 +70,6 @@ class _ReportViewState extends State<ReportView> {
         });
     }
 
-    // .push.set({ 'name': 'stuff' })
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -96,16 +80,6 @@ class _ReportViewState extends State<ReportView> {
         reverse: true,
         shrinkWrap: true,
         children: <Widget>[
-          // FirebaseAnimatedList(
-          //   query: FirebaseDatabase.instance
-          //   .reference().child('reports')
-          //   .orderByChild('crime')
-          //   .startAt(0).endAt(3),
-          //   itemBuilder: (_, DataSnapshot snapshot,
-          //     Animation<double> animation, int x) {
-          //       return Text(snapshot.toString());
-          //     },
-          //   ),
           Container(
             padding: EdgeInsets.all(20.0),
             decoration: BoxDecoration(
