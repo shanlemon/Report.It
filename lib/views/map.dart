@@ -2,8 +2,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong/latlong.dart';
-
 import './crime.dart';
+import '../config.dart';
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.title}) : super(key: key);
@@ -32,7 +32,7 @@ class _MyHomePageState extends State<MyHomePage> {
           urlTemplate: "https://api.tiles.mapbox.com/v4/"
               "{id}/{z}/{x}/{y}@2x.png?access_token={accessToken}",
           additionalOptions: {
-            'accessToken': String.fromEnvironment('MAPBOX_KEY') ?? 'oopsies',
+            'accessToken': Config.MAPBOX_KEY ?? 'oopsies',
             'id': 'mapbox.streets',
           },
         ),
@@ -46,7 +46,8 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         tooltip: 'Increment',
         icon: Icon(Icons.camera),
-        label: Text("Report crime"),
+        // label: Text("Report crime"),
+        label: Text(Config.TEST ?? 'no good'),
         backgroundColor: Colors.red,
       ),
     );
