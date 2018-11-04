@@ -2,8 +2,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong/latlong.dart';
-
 import './crime.dart';
+import '../config.dart';
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.title}) : super(key: key);
@@ -32,27 +32,9 @@ class _MyHomePageState extends State<MyHomePage> {
           urlTemplate: "https://api.tiles.mapbox.com/v4/"
               "{id}/{z}/{x}/{y}@2x.png?access_token={accessToken}",
           additionalOptions: {
-            'accessToken': 'pk.eyJ1Ijoia2FlbGluYXRvciIsImEiOiJjam8yNGx2aGYwaW8wM2txc2ZvMXV0ODk4In0.CZ3L5U67Z6bkcVCf7xxNsg',
+            'accessToken': Config.MAPBOX_KEY ?? 'oopsies',
             'id': 'mapbox.streets',
           },
-        ),
-        new MarkerLayerOptions(
-          markers: [
-            new Marker(
-              width: 80.0,
-              height: 80.0,
-              point: new LatLng(29.834, -95.4342),
-              builder: (ctx) =>
-              new Container(
-                child: IconButton(
-                  icon: Icon(Icons.warning),
-                  iconSize: 48.0,
-                  color: Colors.orange,
-                  onPressed: () => {},
-                )
-              ),
-            ),
-          ],
         ),
       ],
     ),
@@ -64,9 +46,29 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         tooltip: 'Increment',
         icon: Icon(Icons.camera),
-        label: Text("Report crime"),
+        // label: Text("Report crime"),
+        label: Text(Config.TEST ?? 'no good'),
         backgroundColor: Colors.red,
       ),
     );
   }
 }
+
+// new MarkerLayerOptions(
+//   markers: [
+//     new Marker(
+//       width: 80.0,
+//       height: 80.0,
+//       point: new LatLng(29.834, -95.4342),
+//       builder: (ctx) =>
+//       new Container(
+//         child: IconButton(
+//           icon: Icon(Icons.warning),
+//           iconSize: 48.0,
+//           color: Colors.orange,
+//           onPressed: () => {},
+//         )
+//       ),
+//     ),
+//   ],
+// ),
