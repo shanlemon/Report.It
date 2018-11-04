@@ -7,9 +7,7 @@ import './report.dart';
 import '../config.dart';
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
-
-  final String title;
+  MyHomePage({Key key}) : super(key: key);
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
@@ -18,12 +16,15 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
 
 
+  LatLng position = LatLng(29.834, -95.4342);
+  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: FlutterMap(
         options: MapOptions(
-          center: LatLng(29.834, -95.4342),
+          center: position,
           zoom: 13.0,
         ),
         layers: [
