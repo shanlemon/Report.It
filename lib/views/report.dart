@@ -17,6 +17,8 @@ class _ReportViewState extends State<ReportView> {
   File image;
   LatLng latestLoc;
   String address = "";
+  DateTime timestamp;
+  int crimeType = 3;
 
   @override
     void initState() {
@@ -26,6 +28,7 @@ class _ReportViewState extends State<ReportView> {
         setState(() {
           image = f;
         });
+        timestamp = new DateTime.now();
       });
 
       Geolocator()
@@ -55,7 +58,9 @@ class _ReportViewState extends State<ReportView> {
       appBar: AppBar(
         title: const Text('New report'),
       ),
-      body: Column(
+      body: ListView(
+        reverse: true,
+        shrinkWrap: true,
         children: <Widget>[
           Container(
             padding: EdgeInsets.all(20.0),
@@ -72,8 +77,16 @@ class _ReportViewState extends State<ReportView> {
                     ),
             )
           ),
+          // Container(
+          //   padding: EdgeInsets.only(bottom: 20.0),
+          //   child: Text(
+          //       "${timestamp.hour}:${timestamp.minute}",
+          //       textAlign: TextAlign.center,
+          //       textScaleFactor: 1.6
+          //     )
+          // ),
           Container(
-            padding: EdgeInsets.only(left: 20.0, right: 20.0),
+            padding: EdgeInsets.only(left: 20.0, right: 20.0, bottom: 10.0),
             child: Text(address,
               textAlign: TextAlign.center,
               textScaleFactor: 1.6,
@@ -85,11 +98,22 @@ class _ReportViewState extends State<ReportView> {
               ButtonColumn(false, Icons.person, "Homicide"),
               ButtonColumn(false, Icons.person_pin, "Robbery"),
               ButtonColumn(false, Icons.directions_run, "Dispute"),
-              ButtonColumn(false, Icons.do_not_disturb_alt, "Misc")
+              ButtonColumn(true, Icons.do_not_disturb_alt, "Misc")
             ],
+          ),
+          Container(
+            padding: EdgeInsets.all(20.0),
+            child: TextField(
+              maxLines: 4,
+              maxLength: 80,
+              maxLengthEnforced: true,
+              decoration: InputDecoration(
+                border: InputBorder.none,
+                hintText: 'Please briefly describe what is occuring'
+              ),
+            )
           )
-        ],
-        
+        ].reversed.toList()
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => print('Done!'), // update database

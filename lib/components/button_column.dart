@@ -25,7 +25,9 @@ class _ButtonColumnState extends State<ButtonColumn> {
 
     Color col = _active ? Theme.of(context).primaryColor : Colors.black;
 
-    return Column(
+    return Container(
+      padding: EdgeInsets.only(left: 5.0, right: 5.0),
+      child: Column(
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -42,6 +44,8 @@ class _ButtonColumnState extends State<ButtonColumn> {
             ),
           ),
         ],
-      );
+      )
+    );
+    
   }
 }
