@@ -32,27 +32,9 @@ class _MyHomePageState extends State<MyHomePage> {
           urlTemplate: "https://api.tiles.mapbox.com/v4/"
               "{id}/{z}/{x}/{y}@2x.png?access_token={accessToken}",
           additionalOptions: {
-            'accessToken': 'pk.eyJ1Ijoia2FlbGluYXRvciIsImEiOiJjam8yNGx2aGYwaW8wM2txc2ZvMXV0ODk4In0.CZ3L5U67Z6bkcVCf7xxNsg',
+            'accessToken': String.fromEnvironment('MAPBOX_KEY') ?? 'oopsies',
             'id': 'mapbox.streets',
           },
-        ),
-        new MarkerLayerOptions(
-          markers: [
-            new Marker(
-              width: 80.0,
-              height: 80.0,
-              point: new LatLng(29.834, -95.4342),
-              builder: (ctx) =>
-              new Container(
-                child: IconButton(
-                  icon: Icon(Icons.warning),
-                  iconSize: 48.0,
-                  color: Colors.orange,
-                  onPressed: () => {},
-                )
-              ),
-            ),
-          ],
         ),
       ],
     ),
@@ -70,3 +52,22 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
+
+// new MarkerLayerOptions(
+//   markers: [
+//     new Marker(
+//       width: 80.0,
+//       height: 80.0,
+//       point: new LatLng(29.834, -95.4342),
+//       builder: (ctx) =>
+//       new Container(
+//         child: IconButton(
+//           icon: Icon(Icons.warning),
+//           iconSize: 48.0,
+//           color: Colors.orange,
+//           onPressed: () => {},
+//         )
+//       ),
+//     ),
+//   ],
+// ),
