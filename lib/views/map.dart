@@ -2,73 +2,114 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong/latlong.dart';
-import './crime.dart';
+import 'package:geolocator/geolocator.dart';
+import 'dart:async';
+
+import './report.dart';
 import '../config.dart';
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
-
-  final String title;
+  MyHomePage({Key key}) : super(key: key);
 
   @override
-  _MyHomePageState createState() => new _MyHomePageState();
+  _MyHomePageState createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
 
+
+  LatLng position = LatLng(0.0, 0.0);
+  StreamSubscription<Position> _positionStream;
+
+  @override
+  void initState() {
+    
+    print("hello");
+    Geolocator()
+      .checkGeolocationPermissionStatus()
+      .then((GeolocationStatus snapshot) {
+
+        if (snapshot.index == GeolocationStatus.denied.index
+          || snapshot.index == GeolocationStatus.disabled.index) {
+            print('bummer');
+            return;
+        }
+      });
+
+    _positionStream = Geolocator()
+      .getPositionStream(
+        LocationOptions(accuracy: LocationAccuracy.best, timeInterval: 100)
+      )
+      .listen((Position pos) {
+        setState(() {
+          position = LatLng(pos.latitude, pos.longitude);
+        });
+        print("position ${pos.latitude}, ${pos.longitude}");
+      });
+
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+
+    if (_positionStream != null) {
+      _positionStream.cancel();
+      _positionStream = null;
+    }
+
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
-      appBar: new AppBar(
-        title: new Text(widget.title),
-      ),
+    return Scaffold(
       body: FlutterMap(
-      options: new MapOptions(
-        center: new LatLng(29.834, -95.4342),
-        zoom: 13.0,
-      ),
-      layers: [
-        new TileLayerOptions(
-          urlTemplate: "https://api.tiles.mapbox.com/v4/"
-              "{id}/{z}/{x}/{y}@2x.png?access_token={accessToken}",
-          additionalOptions: {
-            'accessToken': Config.MAPBOX_KEY ?? 'oopsies',
-            'id': 'mapbox.streets',
-          },
+        options: MapOptions(
+          center: position,
+          zoom: 2.0,
         ),
-      ],
-    ),
-      floatingActionButton: new FloatingActionButton.extended(
+        layers: [
+          TileLayerOptions(
+            urlTemplate: "https://api.tiles.mapbox.com/v4/"
+                "{id}/{z}/{x}/{y}@2x.png?access_token={accessToken}",
+            additionalOptions: {
+              'accessToken': Config.MAPBOX_KEY ?? 'oopsies',
+              'id': 'mapbox.streets',
+            },
+          ),
+          MarkerLayerOptions(
+            markers: [
+              Marker(
+                width: 80.0,
+                height: 80.0,
+                point: position,
+                builder: (ctx) =>
+                Container(
+                  child: IconButton(
+                    icon: Icon(Icons.person_pin),
+                    iconSize: 48.0,
+                    color: Colors.orange,
+                    onPressed: () => {},
+                  )
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+      floatingActionButton: FloatingActionButton.extended(
         onPressed: () => Navigator.push(context,
-            new MaterialPageRoute(
-              builder: (context) => new CrimeView()
+            MaterialPageRoute(
+              builder: (context) => ReportView()
             )
           ),
         tooltip: 'Increment',
         icon: Icon(Icons.camera),
-        // label: Text("Report crime"),
-        label: Text(Config.TEST ?? 'no good'),
+        label: Text("Report crime"),
         backgroundColor: Colors.red,
       ),
     );
   }
 }
 
-// new MarkerLayerOptions(
-//   markers: [
-//     new Marker(
-//       width: 80.0,
-//       height: 80.0,
-//       point: new LatLng(29.834, -95.4342),
-//       builder: (ctx) =>
-//       new Container(
-//         child: IconButton(
-//           icon: Icon(Icons.warning),
-//           iconSize: 48.0,
-//           color: Colors.orange,
-//           onPressed: () => {},
-//         )
-//       ),
-//     ),
-//   ],
-// ),
