@@ -73,17 +73,20 @@ class _ReportViewState extends State<ReportView> {
           .putFile(image)
           .onComplete.then((StorageTaskSnapshot x) {
             
-          FirebaseDatabase.instance.reference().child('reports')
-            .push().set({
-              'crime': crimeType,
-              'description': description,
-              'image': x.ref.getDownloadURL().toString(),
-              'latitude': latestLoc.latitude,
-              'longitude': latestLoc.longitude,
-              'timestamp': timestamp.millisecondsSinceEpoch,
-              'address': address
-            });
+            x.ref.getDownloadURL().then((dynamic x) {
+
+              FirebaseDatabase.instance.reference().child('reports')
+                .push().set({
+                  'crime': crimeType,
+                  'description': description,
+                  'image': x.toString(),
+                  'latitude': latestLoc.latitude,
+                  'longitude': latestLoc.longitude,
+                  'timestamp': timestamp.millisecondsSinceEpoch,
+                  'address': address
+                });
             Navigator.pop(context);
+            });
           });
       }
       // StorageUploadTask task = FirebaseStorageref.putFile(sampleImage);

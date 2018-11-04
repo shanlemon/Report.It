@@ -91,7 +91,9 @@ class _MyHomePageState extends State<MyHomePage> {
                           child: Card(
                             child: Column(
                               children: <Widget>[
-                                Image.network(m.image ?? "https://proxy.duckduckgo.com/iur/?f=1&image_host=https%3A%2F%2Fstyletips101.com%2Fwp-content%2Fuploads%2F2017%2F03%2Fpotato.png&u=https://media.styletips101.com/2017/03/potato.png"),
+                                Container(child: Image.network(m.image ?? "https://proxy.duckduckgo.com/iur/?f=1&image_host=https%3A%2F%2Fstyletips101.com%2Fwp-content%2Fuploads%2F2017%2F03%2Fpotato.png&u=https://media.styletips101.com/2017/03/potato.png", width: 400.0,
+                      fit: BoxFit.cover), width: 300.0, height: 150.0),
+                                
                                 Icon(
                                   getIcon(m.crime),
                                   size: 48.0,
