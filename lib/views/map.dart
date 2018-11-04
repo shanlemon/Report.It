@@ -2,6 +2,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong/latlong.dart';
+import 'package:geolocator/geolocator.dart';
+import 'dart:async';
 
 import './report.dart';
 import '../config.dart';
@@ -17,7 +19,48 @@ class _MyHomePageState extends State<MyHomePage> {
 
 
   LatLng position = LatLng(29.834, -95.4342);
-  
+  StreamSubscription<Position> _positionStream;
+
+  @override
+    void initState() {
+      super.initState();
+
+      Geolocator()
+        .checkGeolocationPermissionStatus()
+        .then((GeolocationStatus snapshot) {
+
+          if (snapshot.index == GeolocationStatus.denied.index
+            || snapshot.index == GeolocationStatus.disabled.index) {
+              print('bummer');
+          }
+        });
+
+      if (_positionStream == null) {
+        _positionStream = Geolocator()
+          .getPositionStream(
+            LocationOptions(accuracy: LocationAccuracy.best, distanceFilter: 10)
+          )
+          .listen((Position pos) {
+            setState(() {
+              position = LatLng(pos.latitude, pos.longitude);
+            });
+            print(position);
+          });
+
+        _positionStream.pause();
+      }
+
+    }
+
+  @override
+  void dispose() {
+    if (_positionStream != null) {
+      _positionStream.cancel();
+      _positionStream = null;
+    }
+
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,6 +79,24 @@ class _MyHomePageState extends State<MyHomePage> {
               'id': 'mapbox.streets',
             },
           ),
+          MarkerLayerOptions(
+            markers: [
+              Marker(
+                width: 80.0,
+                height: 80.0,
+                point: position,
+                builder: (ctx) =>
+                Container(
+                  child: IconButton(
+                    icon: Icon(Icons.warning),
+                    iconSize: 48.0,
+                    color: Colors.orange,
+                    onPressed: () => {},
+                  )
+                ),
+              ),
+            ],
+          ),
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
@@ -53,21 +114,3 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
-// MarkerLayerOptions(
-//   markers: [
-//     Marker(
-//       width: 80.0,
-//       height: 80.0,
-//       point: LatLng(29.834, -95.4342),
-//       builder: (ctx) =>
-//       Container(
-//         child: IconButton(
-//           icon: Icon(Icons.warning),
-//           iconSize: 48.0,
-//           color: Colors.orange,
-//           onPressed: () => {},
-//         )
-//       ),
-//     ),
-//   ],
-// ),
