@@ -1,5 +1,7 @@
 import "package:flutter/material.dart";
-import 'package:camera/camera.dart';
+import 'dart:io';
+
+import 'package:image_picker/image_picker.dart';
 
 class CrimeView extends StatefulWidget {
   @override
@@ -8,50 +10,32 @@ class CrimeView extends StatefulWidget {
 
 class _CrimeViewState extends State<CrimeView> {
 
-  CameraController controller;
-  List<CameraDescription> cameras;
+  File _image;
 
-  Future<List<CameraDescription>> getCameras() {
-    
-    return availableCameras();
+  Future getImage() async {
+    File image = await ImagePicker.pickImage(source: ImageSource.camera);
 
-  }
-
-  @override
-  void initState() {
-    super.initState();
-
-    getCameras()
-      .then((List<CameraDescription> s) {
-        setState(() {
-          cameras = s;
-        });
-      })
-      .then((_) {
-        controller = CameraController(cameras[0], ResolutionPreset.high);
-        controller.initialize().then((_) {
-          if (!mounted) return;
-
-          setState(() {});
-        });
-      });
-
-  }
-
-  @override
-  void dispose() {
-    controller?.dispose();
-    super.dispose();
+    setState(() {
+      _image = image;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    if (!controller.value.isInitialized) {
-      return new Container();
-    }
-    return new AspectRatio(
-        aspectRatio:
-        controller.value.aspectRatio,
-        child: new CameraPreview(controller));
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Image Picker Example'),
+      ),
+      body: Center(
+        child: _image == null
+            ? const Text('No image selected.')
+            : Image.file(_image),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: getImage,
+        tooltip: 'Pick Image',
+        child: const Icon(Icons.add_a_photo),
+      ),
+    );
   }
 }
