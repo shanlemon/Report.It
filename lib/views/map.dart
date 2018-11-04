@@ -18,42 +18,41 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
 
 
-  LatLng position = LatLng(29.834, -95.4342);
+  LatLng position = LatLng(0.0, 0.0);
   StreamSubscription<Position> _positionStream;
 
   @override
-    void initState() {
-      super.initState();
+  void initState() {
+    
+    print("hello");
+    Geolocator()
+      .checkGeolocationPermissionStatus()
+      .then((GeolocationStatus snapshot) {
 
-      Geolocator()
-        .checkGeolocationPermissionStatus()
-        .then((GeolocationStatus snapshot) {
+        if (snapshot.index == GeolocationStatus.denied.index
+          || snapshot.index == GeolocationStatus.disabled.index) {
+            print('bummer');
+            return;
+        }
+      });
 
-          if (snapshot.index == GeolocationStatus.denied.index
-            || snapshot.index == GeolocationStatus.disabled.index) {
-              print('bummer');
-          }
+    _positionStream = Geolocator()
+      .getPositionStream(
+        LocationOptions(accuracy: LocationAccuracy.best, timeInterval: 100)
+      )
+      .listen((Position pos) {
+        setState(() {
+          position = LatLng(pos.latitude, pos.longitude);
         });
+        print("position ${pos.latitude}, ${pos.longitude}");
+      });
 
-      if (_positionStream == null) {
-        _positionStream = Geolocator()
-          .getPositionStream(
-            LocationOptions(accuracy: LocationAccuracy.best, distanceFilter: 10)
-          )
-          .listen((Position pos) {
-            setState(() {
-              position = LatLng(pos.latitude, pos.longitude);
-            });
-            print(position);
-          });
-
-        _positionStream.pause();
-      }
-
-    }
+    super.initState();
+  }
 
   @override
   void dispose() {
+
     if (_positionStream != null) {
       _positionStream.cancel();
       _positionStream = null;
@@ -68,7 +67,7 @@ class _MyHomePageState extends State<MyHomePage> {
       body: FlutterMap(
         options: MapOptions(
           center: position,
-          zoom: 13.0,
+          zoom: 2.0,
         ),
         layers: [
           TileLayerOptions(
@@ -88,7 +87,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 builder: (ctx) =>
                 Container(
                   child: IconButton(
-                    icon: Icon(Icons.warning),
+                    icon: Icon(Icons.person_pin),
                     iconSize: 48.0,
                     color: Colors.orange,
                     onPressed: () => {},
