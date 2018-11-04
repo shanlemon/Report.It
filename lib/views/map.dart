@@ -2,7 +2,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong/latlong.dart';
-import './crime.dart';
+import 'package:image_picker/image_picker.dart';
+
+import './report.dart';
 import '../config.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -16,32 +18,36 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
 
+  Future<LatLng> getLocation() {
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
+      // appBar: AppBar(
+      //   title: Text(widget.title),
+      // ),
       body: FlutterMap(
-      options: MapOptions(
-        center: LatLng(29.834, -95.4342),
-        zoom: 13.0,
-      ),
-      layers: [
-        TileLayerOptions(
-          urlTemplate: "https://api.tiles.mapbox.com/v4/"
-              "{id}/{z}/{x}/{y}@2x.png?access_token={accessToken}",
-          additionalOptions: {
-            'accessToken': Config.MAPBOX_KEY ?? 'oopsies',
-            'id': 'mapbox.streets',
-          },
+        options: MapOptions(
+          center: LatLng(29.834, -95.4342),
+          zoom: 13.0,
         ),
-      ],
-    ),
+        layers: [
+          TileLayerOptions(
+            urlTemplate: "https://api.tiles.mapbox.com/v4/"
+                "{id}/{z}/{x}/{y}@2x.png?access_token={accessToken}",
+            additionalOptions: {
+              'accessToken': Config.MAPBOX_KEY ?? 'oopsies',
+              'id': 'mapbox.streets',
+            },
+          ),
+        ],
+      ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => Navigator.push(context,
             MaterialPageRoute(
-              builder: (context) => CrimeView()
+              builder: (context) => ReportView(getLocation(), ImagePicker.pickImage(source: ImageSource.camera))
             )
           ),
         tooltip: 'Increment',
