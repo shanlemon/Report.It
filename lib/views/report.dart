@@ -1,8 +1,11 @@
 import "package:flutter/material.dart";
 import 'dart:io';
+import 'dart:convert';
 import 'package:latlong/latlong.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 import '../components/button_column.dart';
 
@@ -19,6 +22,8 @@ class _ReportViewState extends State<ReportView> {
   String address = "";
   DateTime timestamp;
   int crimeType = 3;
+  String description;
+  int data;
 
   @override
     void initState() {
@@ -28,7 +33,6 @@ class _ReportViewState extends State<ReportView> {
         setState(() {
           image = f;
         });
-        timestamp = new DateTime.now();
       });
 
       Geolocator()
@@ -37,18 +41,53 @@ class _ReportViewState extends State<ReportView> {
 
           setState(() { 
             latestLoc = LatLng(pos.latitude, pos.longitude);
+            timestamp = new DateTime.now();
           });
 
           Geolocator()
             .placemarkFromCoordinates(pos.latitude, pos.longitude)
             .then((List<Placemark> place) {
               Placemark addr = place.first;
-              address = (addr != null)
-                ?"${addr.subThoroughfare} ${addr.thoroughfare}, ${addr.locality},"
-                " ${addr.administrativeArea} ${addr.postalCode}, ${addr.country}"
-                : "";
+
+              setState(() { 
+                address = (addr != null)
+                  ?"${addr.subThoroughfare} ${addr.thoroughfare}, ${addr.locality},"
+                  " ${addr.administrativeArea} ${addr.postalCode}, ${addr.country}"
+                  : "";
+              });
             });
         });
+
+    }
+
+    void submit(BuildContext context) {
+
+
+      if (image != null) {
+        StorageReference firebaseStorage = FirebaseStorage.instance.ref()
+          .child('report-it-37c10')
+          .child('images')
+          .child("${timestamp.millisecondsSinceEpoch}.jpg");
+      
+        firebaseStorage
+          .putFile(image)
+          .onComplete.then((StorageTaskSnapshot x) {
+            
+          FirebaseDatabase.instance.reference().child('reports')
+            .push().set({
+              'crime': crimeType,
+              'description': description,
+              'image': x.ref.getDownloadURL().toString(),
+              'latitude': latestLoc.latitude,
+              'longitude': latestLoc.longitude,
+              'timestamp': timestamp.millisecondsSinceEpoch,
+              'address': address
+            });
+            Navigator.pop(context);
+          });
+      }
+      // StorageUploadTask task = FirebaseStorageref.putFile(sampleImage);
+
 
     }
 
@@ -77,14 +116,6 @@ class _ReportViewState extends State<ReportView> {
                     ),
             )
           ),
-          // Container(
-          //   padding: EdgeInsets.only(bottom: 20.0),
-          //   child: Text(
-          //       "${timestamp.hour}:${timestamp.minute}",
-          //       textAlign: TextAlign.center,
-          //       textScaleFactor: 1.6
-          //     )
-          // ),
           Container(
             padding: EdgeInsets.only(left: 20.0, right: 20.0, bottom: 10.0),
             child: Text(address,
@@ -95,15 +126,16 @@ class _ReportViewState extends State<ReportView> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              ButtonColumn(false, Icons.person, "Homicide"),
-              ButtonColumn(false, Icons.person_pin, "Robbery"),
-              ButtonColumn(false, Icons.directions_run, "Dispute"),
-              ButtonColumn(true, Icons.do_not_disturb_alt, "Misc")
+              ButtonColumn((crimeType == 0), Icons.person, "Homicide", () => setState(() { crimeType = 0; })),
+              ButtonColumn((crimeType == 1), Icons.person_pin, "Robbery", () => setState(() { crimeType = 1; })),
+              ButtonColumn((crimeType == 2), Icons.directions_run, "Dispute", () => setState(() { crimeType = 2; })),
+              ButtonColumn((crimeType == 3), Icons.do_not_disturb_alt, "Misc", () => setState(() { crimeType = 3; }))
             ],
           ),
           Container(
             padding: EdgeInsets.all(20.0),
             child: TextField(
+              onChanged: (String s) => setState(() { description = s; }),
               maxLines: 4,
               maxLength: 80,
               maxLengthEnforced: true,
@@ -116,7 +148,7 @@ class _ReportViewState extends State<ReportView> {
         ].reversed.toList()
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => print('Done!'), // update database
+        onPressed: () => submit(context), // update database
         tooltip: 'Publish',
         child: const Icon(Icons.file_upload),
       ),
