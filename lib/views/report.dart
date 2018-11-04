@@ -1,38 +1,27 @@
 import "package:flutter/material.dart";
 import 'dart:io';
 import 'package:latlong/latlong.dart';
+import 'package:image_picker/image_picker.dart';
 
 class ReportView extends StatefulWidget {
-
-  final Future<File> _image;
-  final Future<LatLng> _loc;
-
-  ReportView(this._loc, this._image);
-
+  
   @override
-  _ReportViewState createState() => _ReportViewState(_loc, _image);
+  _ReportViewState createState() => _ReportViewState();
 }
 
 class _ReportViewState extends State<ReportView> {
 
-  final Future<File> _image;
-  final Future<LatLng> _loc;
-
   File image;
   LatLng loc;
-
-  _ReportViewState(this._loc, this._image);
-
 
   @override
     void initState() {
       super.initState();
 
-      _image.then((File f) {
+       ImagePicker.pickImage(source: ImageSource.camera).then((File f) {
         setState(() {
           image = f;
         });
-        print("\n\nImage loaded");
       });
 
       // _loc.then((LatLng l) {

@@ -2,7 +2,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong/latlong.dart';
-import 'package:image_picker/image_picker.dart';
 
 import './report.dart';
 import '../config.dart';
@@ -18,16 +17,10 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
 
-  Future<LatLng> getLocation() {
-    return null;
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(
-      //   title: Text(widget.title),
-      // ),
       body: FlutterMap(
         options: MapOptions(
           center: LatLng(29.834, -95.4342),
@@ -47,7 +40,7 @@ class _MyHomePageState extends State<MyHomePage> {
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => Navigator.push(context,
             MaterialPageRoute(
-              builder: (context) => ReportView(getLocation(), ImagePicker.pickImage(source: ImageSource.camera))
+              builder: (context) => ReportView()
             )
           ),
         tooltip: 'Increment',
