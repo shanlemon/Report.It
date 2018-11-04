@@ -1,9 +1,11 @@
 import "package:flutter/material.dart";
 import 'dart:io';
+import 'dart:convert';
 import 'package:latlong/latlong.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 import '../components/button_column.dart';
 
@@ -58,17 +60,35 @@ class _ReportViewState extends State<ReportView> {
 
     }
 
-    void submit() {
-      FirebaseDatabase.instance.reference().child('reports')
-        .push().set({
-          'crime': crimeType,
-          'description': description,
-          'image': 'null', // TODO
-          'latitude': latestLoc.latitude,
-          'longitude': latestLoc.longitude,
-          'timestamp': timestamp.millisecondsSinceEpoch,
-          'address': address
-        });
+    void submit(BuildContext context) {
+
+
+      if (image != null) {
+        StorageReference firebaseStorage = FirebaseStorage.instance.ref()
+          .child('report-it-37c10')
+          .child('images')
+          .child("${timestamp.millisecondsSinceEpoch}.jpg");
+      
+        firebaseStorage
+          .putFile(image)
+          .onComplete.then((StorageTaskSnapshot x) {
+            
+          FirebaseDatabase.instance.reference().child('reports')
+            .push().set({
+              'crime': crimeType,
+              'description': description,
+              'image': x.ref.getDownloadURL().toString(),
+              'latitude': latestLoc.latitude,
+              'longitude': latestLoc.longitude,
+              'timestamp': timestamp.millisecondsSinceEpoch,
+              'address': address
+            });
+            Navigator.pop(context);
+          });
+      }
+      // StorageUploadTask task = FirebaseStorageref.putFile(sampleImage);
+
+
     }
 
   @override
@@ -128,7 +148,7 @@ class _ReportViewState extends State<ReportView> {
         ].reversed.toList()
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: submit, // update database
+        onPressed: () => submit(context), // update database
         tooltip: 'Publish',
         child: const Icon(Icons.file_upload),
       ),
