@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong/latlong.dart';
 
+import './crime.dart';
+
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.title}) : super(key: key);
 
@@ -13,13 +15,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +24,7 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: FlutterMap(
       options: new MapOptions(
-        center: new LatLng(51.5, -0.09),
+        center: new LatLng(29.834, -95.4342),
         zoom: 13.0,
       ),
       layers: [
@@ -37,7 +32,7 @@ class _MyHomePageState extends State<MyHomePage> {
           urlTemplate: "https://api.tiles.mapbox.com/v4/"
               "{id}/{z}/{x}/{y}@2x.png?access_token={accessToken}",
           additionalOptions: {
-            'accessToken': '<PUT_ACCESS_TOKEN_HERE>',
+            'accessToken': 'pk.eyJ1Ijoia2FlbGluYXRvciIsImEiOiJjam8yNGx2aGYwaW8wM2txc2ZvMXV0ODk4In0.CZ3L5U67Z6bkcVCf7xxNsg',
             'id': 'mapbox.streets',
           },
         ),
@@ -46,34 +41,31 @@ class _MyHomePageState extends State<MyHomePage> {
             new Marker(
               width: 80.0,
               height: 80.0,
-              point: new LatLng(51.5, -0.09),
+              point: new LatLng(29.834, -95.4342),
               builder: (ctx) =>
               new Container(
-                child: new FlutterLogo(),
+                child: IconButton(
+                  icon: Icon(Icons.warning),
+                  iconSize: 48.0,
+                  color: Colors.orange,
+                  onPressed: () => {},
+                )
               ),
             ),
           ],
         ),
       ],
     ),
-      // new Center(
-      //   child: new Column(
-      //     mainAxisAlignment: MainAxisAlignment.center,
-      //     children: <Widget>[
-      //       new Text(
-      //         'You have pushed the button this many times:',
-      //       ),
-      //       new Text(
-      //         '$_counter',
-      //         style: Theme.of(context).textTheme.display1,
-      //       ),
-      //     ],
-      //   ),
-      // ),
-      floatingActionButton: new FloatingActionButton(
-        onPressed: _incrementCounter,
+      floatingActionButton: new FloatingActionButton.extended(
+        onPressed: () => Navigator.push(context,
+            new MaterialPageRoute(
+              builder: (context) => new CrimeView()
+            )
+          ),
         tooltip: 'Increment',
-        child: new Icon(Icons.add),
+        icon: Icon(Icons.camera),
+        label: Text("Report crime"),
+        backgroundColor: Colors.red,
       ),
     );
   }
