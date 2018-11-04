@@ -84,7 +84,27 @@ class _MyHomePageState extends State<MyHomePage> {
                     icon: Icon(getIcon(m.crime)),
                     iconSize: 48.0,
                     color: Colors.red,
-                    onPressed: () => print("You tapped $m.crime"),
+                    onPressed: () => showDialog(
+                      context: ctx,
+                      builder: (ctx2) => Container(
+                          padding: EdgeInsets.only(bottom: 150.0, top: 150.0, left: 50.0, right: 50.0),
+                          child: Card(
+                            child: Column(
+                              children: <Widget>[
+                                Image.network(m.image ?? "https://proxy.duckduckgo.com/iur/?f=1&image_host=https%3A%2F%2Fstyletips101.com%2Fwp-content%2Fuploads%2F2017%2F03%2Fpotato.png&u=https://media.styletips101.com/2017/03/potato.png"),
+                                Icon(
+                                  getIcon(m.crime),
+                                  size: 48.0,
+                                ),
+                                Text(m.address ?? "null",
+                                  textAlign: TextAlign.center,
+                                  textScaleFactor: 1.6
+                                  )
+                              ],
+                            ),
+                        )
+                      )
+                    )
                   )
                 )
             )).toList();

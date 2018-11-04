@@ -9,9 +9,10 @@ class CrimeMarker extends StatelessWidget {
   final String description;
   final int timestamp;
   final int crime;
+  final String address;
 
 
-  CrimeMarker({this.location, this.image, this.description, this.timestamp, this.crime});
+  CrimeMarker({this.location, this.image, this.description, this.timestamp, this.crime, this.address});
 
   factory CrimeMarker.fromJSON(Map<dynamic, dynamic> parsedJson) {
 
@@ -20,7 +21,8 @@ class CrimeMarker extends StatelessWidget {
       image: parsedJson['image'],
       description: parsedJson['description'],
       timestamp: parsedJson['timestamp'],
-      crime: parsedJson['crime']
+      crime: parsedJson['crime'],
+      address: parsedJson['address'],
     );
   }
 

@@ -66,7 +66,8 @@ class _ReportViewState extends State<ReportView> {
           'image': 'null', // TODO
           'latitude': latestLoc.latitude,
           'longitude': latestLoc.longitude,
-          'timestamp': timestamp.millisecondsSinceEpoch
+          'timestamp': timestamp.millisecondsSinceEpoch,
+          'address': address
         });
     }
 
